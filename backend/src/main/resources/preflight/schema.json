@@ -1,0 +1,92 @@
+{
+  "slug": "integration-hub",
+  "title": "接口映射与重试策略预检",
+  "fields": [
+    {
+      "key": "mapping_no",
+      "label": "映射编号",
+      "type": "ID",
+      "length": 200
+    },
+    {
+      "key": "source",
+      "label": "源字段",
+      "type": "ID",
+      "length": 200
+    },
+    {
+      "key": "target",
+      "label": "目标字段",
+      "type": "ID",
+      "length": 200
+    },
+    {
+      "key": "retries",
+      "label": "重试次数",
+      "type": "INTEGER",
+      "length": 200,
+      "scale": 0,
+      "max": "10"
+    },
+    {
+      "key": "backoff_seconds",
+      "label": "重试间隔秒",
+      "type": "INTEGER",
+      "length": 200,
+      "scale": 0,
+      "min": "1",
+      "max": "3600"
+    },
+    {
+      "key": "timeout_seconds",
+      "label": "超时秒",
+      "type": "INTEGER",
+      "length": 200,
+      "scale": 0,
+      "min": "1",
+      "max": "3600"
+    }
+  ],
+  "unique": [
+    [
+      "mapping_no"
+    ],
+    [
+      "target"
+    ]
+  ],
+  "rules": [
+    {
+      "op": "DIFFERENT",
+      "args": [
+        "source",
+        "target"
+      ],
+      "code": "MAPPING_SELF",
+      "message": "源字段与目标字段须不同",
+      "bad": {
+        "target": "source.orderNo"
+      }
+    },
+    {
+      "op": "LE",
+      "args": [
+        "backoff_seconds",
+        "timeout_seconds"
+      ],
+      "code": "RETRY_WINDOW",
+      "message": "重试间隔不能大于当前请求超时窗口",
+      "bad": {
+        "backoff_seconds": "61"
+      }
+    }
+  ],
+  "sampleCsv": "mapping_no,source,target,retries,backoff_seconds,timeout_seconds\nMAP-001,source.orderNo,target.orderNo,3,30,60\n",
+  "limits": {
+    "rows": 500,
+    "bytes": 262144,
+    "columns": 32,
+    "cellCharacters": 4000
+  },
+  "scope": "Read-only batch validation; no persistence, reference-master lookup or full production certification."
+}
