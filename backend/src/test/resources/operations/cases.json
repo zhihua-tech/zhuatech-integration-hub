@@ -1,0 +1,60 @@
+[
+  {
+    "patch": {},
+    "expected": {
+      "decision": "PASS",
+      "attempts": "#4",
+      "totalBackoffSeconds": "#7",
+      "worstCaseSeconds": "#27"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "deadlineSeconds": "26"
+    },
+    "expected": {
+      "decision": "HOLD",
+      "deadlineOverrun": "#1"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "idempotencyReady": "NO"
+    },
+    "expected": {
+      "decision": "HOLD"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "retries": "0",
+      "idempotencyReady": "NO"
+    },
+    "expected": {
+      "decision": "PASS",
+      "worstCaseSeconds": "#5"
+    },
+    "error": false
+  },
+  {
+    "patch": {
+      "maxDelaySeconds": "0"
+    },
+    "expected": {},
+    "error": true
+  },
+  {
+    "patch": {
+      "retries": "5",
+      "deadlineSeconds": "100"
+    },
+    "expected": {
+      "totalBackoffSeconds": "#25",
+      "worstCaseSeconds": "#55"
+    },
+    "error": false
+  }
+]
